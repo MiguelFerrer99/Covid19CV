@@ -1,0 +1,2 @@
+# Covid19CV
+This is an Android app done with Android Studio + Java. It's one of the projects of the "Android Apps Development" subject of my Computer Science degree and it is based on a list of cities that tells you the number of covid cases and deaths that there are in each city. In addition, you will be able to create Reports in the city you live. In this project I've learnt so much, like how to do interfaces in Android Studio and how to use some services like HTTP Requests, Locations, SQLite and so on. I hope you like it :)
