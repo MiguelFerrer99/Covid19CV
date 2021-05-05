@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Covid19CV</string>
+    <string name="ord_by_casos">Ordenar por casos</string>
+    <string name="ord_by_alf">Ordenar alfabéticamente</string>
+    <string name="ord_by_fallec">Ordenar por fallecimientos</string>
+    <string name="arrows_up_down"> </string>
+    <string name="locate_municipality"> </string>
+</resources>

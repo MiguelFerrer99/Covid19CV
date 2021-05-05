@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MunicipioActivity">
+
+    <TextView
+        android:id="@+id/tvCPlabel"
+        android:layout_width="141dp"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:text="Código postal:"
+        android:textAlignment="textEnd"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.27"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.018"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/tvCodigoPostal"
+        android:layout_width="135dp"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="textStart"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/tvCPlabel"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.018"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/tvNumeroCasos"
+        android:layout_width="135dp"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="textStart"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/tvNCasosLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tvCodigoPostal"
+        app:layout_constraintVertical_bias="0.012"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/tvNCasosLabel"
+        android:layout_width="99dp"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:text="Nº casos:"
+        android:textAlignment="textEnd"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.368"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCPlabel"
+        app:layout_constraintVertical_bias="0.012"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/tvNFallecimientosLabel"
+        android:layout_width="178dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:text="Nº fallecimientos:"
+        android:textAlignment="textEnd"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.154"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNCasosLabel"
+        app:layout_constraintVertical_bias="0.012"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/tvNumeroFallecimientos"
+        android:layout_width="138dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="textStart"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/tvNFallecimientosLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumeroCasos"
+        app:layout_constraintVertical_bias="0.012"
+        tools:ignore="RtlCompat" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="60dp"
+        android:layout_height="57dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.88"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.93"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="151dp"
+        android:layout_height="47dp"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:text="Informes:"
+        android:textAlignment="textStart"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/lista_informes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="RtlCompat" />
+
+    <ListView
+        android:id="@+id/lista_informes"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

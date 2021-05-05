@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/app_bar_search"
+        android:icon="@drawable/custom_search_icon"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/cv_web"
+        android:icon="@drawable/cv_web"
+        android:title="web"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/sort_up_down"
+        android:icon="@drawable/sort_up_down"
+        android:title="@string/arrows_up_down"
+        app:showAsAction="always" />
+    <item android:id="@+id/ordenar_alfabeticamente_button"
+        android:title="@string/ord_by_alf" />
+    <item android:title="@string/ord_by_casos"
+          android:id="@+id/ordenar_por_casos" />
+    <item android:title="@string/ord_by_fallec"
+          android:id="@+id/ordenar_por_fallecimientos" />
+</menu>
