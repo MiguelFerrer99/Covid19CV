@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -26,6 +27,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.Toast;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -44,6 +47,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class MunicipiosActivity extends AppCompatActivity implements LocationListener {
 
@@ -56,6 +62,7 @@ public class MunicipiosActivity extends AppCompatActivity implements LocationLis
     private FloatingActionButton floatingActionButton;
     private String cityFromLocation = "";
     private LocationManager locationManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +70,19 @@ public class MunicipiosActivity extends AppCompatActivity implements LocationLis
         setContentView(R.layout.activity_municipios);
 
         setTitle("Lista municipios");
+        swipeRefreshLayout = findViewById(R.id.refreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                HTTPConnector httpConnector = new HTTPConnector(getApplicationContext(), HTTPConnector.ACTUALIZAR);
+                httpConnector.execute("https://dadesobertes.gva.es/api/3/action/package_show?id=38e6d3ac-fd77-413e-be72-aed7fa6f13c2");
+            }
+        });
         floatingActionButton = findViewById(R.id.floatingActionButton);
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        HTTPConnector httpConnector = new HTTPConnector(this);
-        httpConnector.execute("https://dadesobertes.gva.es/es/api/3/action/datastore_search?resource_id=f6cb1e39-2839-4d38-8fd7-74430775a97e&limit=1000");
+        HTTPConnector httpConnector = new HTTPConnector(this, HTTPConnector.INICIO);
+        httpConnector.execute("https://dadesobertes.gva.es/api/3/action/package_show?id=38e6d3ac-fd77-413e-be72-aed7fa6f13c2");
 
         floatingActionButton.setOnClickListener(v -> {
             Intent intent = new Intent(MunicipiosActivity.this,InformeActivity.class);
@@ -196,10 +211,15 @@ public class MunicipiosActivity extends AppCompatActivity implements LocationLis
     @SuppressLint("StaticFieldLeak")
     public class HTTPConnector extends AsyncTask<String, Void, ArrayList<Municipio>> {
 
-        private Context context;
+        public static final int INICIO = 1;
+        public static final int ACTUALIZAR = 2;
 
-        public HTTPConnector(Context context) {
+        private Context context;
+        private int estado;
+
+        public HTTPConnector(Context context, int estado) {
             this.context = context;
+            this.estado = estado;
         }
 
         @Override
@@ -232,16 +252,39 @@ public class MunicipiosActivity extends AppCompatActivity implements LocationLis
                 String stringJson = writer.toString();
                 JSONObject jsonObject = new JSONObject(stringJson);
                 JSONObject jsonObjectResult = jsonObject.getJSONObject("result");
-                JSONArray jsonArrayRecords = jsonObjectResult.getJSONArray("records");
-                for(int i=0; i<jsonArrayRecords.length(); i++) {
-                    JSONObject datosMunicipios = jsonArrayRecords.getJSONObject(i);
-                    Municipio municipio = new Municipio();
-                    municipio.setNombre(datosMunicipios.getString("Municipi"));
-                    municipio.setCodigoPostal(datosMunicipios.getInt("CodMunicipio"));
-                    municipio.setCasos(datosMunicipios.getInt("Casos PCR+"));
-                    municipio.setFallecimientos(datosMunicipios.getInt("Defuncions"));
-                    municipiosAux.add(municipio);
+                JSONArray jsonArrayResources = jsonObjectResult.getJSONArray("resources");
+                JSONObject jsonObjectResource = jsonArrayResources.getJSONObject(jsonArrayResources.length()-1);
+                String updated_url = jsonObjectResource.getString("url");
+
+                URL resourceUrl = new URL(updated_url);
+                HttpsURLConnection resourceConnection = (HttpsURLConnection) resourceUrl.openConnection();
+                resourceConnection.setRequestMethod("GET");
+                //add request header
+                resourceConnection.setRequestProperty("user-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+                resourceConnection.setRequestProperty("accept", "application/json;");
+                resourceConnection.setRequestProperty("accept-language", "es");
+                resourceConnection.connect();
+
+                BufferedReader resourceReader = new BufferedReader(new InputStreamReader(resourceConnection.getInputStream(), StandardCharsets.UTF_8));
+                resourceReader.readLine(); //Leemos la cabecera y nos la saltamos
+                String municipioString = resourceReader.readLine(); //Esto es lo que queremos
+
+                while(municipioString != null) {
+                    if(!municipioString.isEmpty()) {
+                        Municipio municipio = new Municipio();
+                        StringTokenizer stringTokenizer = new StringTokenizer(municipioString, ";");
+                        municipio.setCodigoPostal(Integer.parseInt(stringTokenizer.nextToken()));
+                        municipio.setNombre(stringTokenizer.nextToken());
+                        municipio.setCasos(Integer.parseInt(stringTokenizer.nextToken().trim()));
+                        stringTokenizer.nextToken(); //Nos saltamos este campo, no nos interesa
+                        stringTokenizer.nextToken(); //Nos saltamos este campo, no nos interesa
+                        stringTokenizer.nextToken(); //Nos saltamos este campo, no nos interesa
+                        municipio.setFallecimientos(Integer.parseInt(stringTokenizer.nextToken().trim()));
+                        municipiosAux.add(municipio);
+                    }
+                    municipioString = resourceReader.readLine();
                 }
+                resourceReader.close();
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
@@ -260,6 +303,10 @@ public class MunicipiosActivity extends AppCompatActivity implements LocationLis
             adapterMunicipios.notifyDataSetChanged();
             //Hacemos visible el floatingButton cuando se han terminado de cargar los municipios
             floatingActionButton.setVisibility(View.VISIBLE);
+            if(estado == ACTUALIZAR) {
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(context, "MUNICIPIOS ACTUALIZADOS", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
